@@ -48,4 +48,3 @@ def get_condition(row):
 df["Condition"] = df.apply(get_condition, axis=1)
 # print(df.any)
 
-
