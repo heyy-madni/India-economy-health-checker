@@ -45,6 +45,17 @@ def get_condition(row):
     else:
         return "Stable"
 
-df["Condition"] = df.apply(get_condition, axis=1)
-# print(df.any)
+def detect_contradiction(row):
+    if row["GDP_Growth"] > 3 and row["Unemployment_Change"] > 0:
+        return "Jobless Growth"
+    
+    elif row["GDP_Growth"] < 0 and row["Unemployment_Change"] < 0:
+        return "Data Contradiction / Lag Effect"
+    
+    else:
+        return "No Contradiction"
+    
 
+df["Condition"] = df.apply(get_condition, axis=1)
+df["Contradiction"] = df.apply(detect_contradiction, axis=1)
+print(df.any)
