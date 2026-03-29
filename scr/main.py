@@ -15,11 +15,7 @@ df = pd.read_csv(DATA_FILE)
 
 
 
-# metris 
 
-
-df["GDP_Growth"] = df["GDP"].pct_change() * 100
-df["Unemployment_Change"] = df["Unemployment"].diff()
 
 # remove nan 
 df = df.dropna()
@@ -54,8 +50,19 @@ def detect_contradiction(row):
     
     else:
         return "No Contradiction"
-    
 
+def generate_insight(row):
+    return f"{int(row['Year'])}: {row['Condition']} with {row['Contradiction']}"
+
+# new coloums(metrics)
+
+
+df["GDP_Growth"] = df["GDP"].pct_change() * 100
+df["Unemployment_Change"] = df["Unemployment"].diff()
 df["Condition"] = df.apply(get_condition, axis=1)
 df["Contradiction"] = df.apply(detect_contradiction, axis=1)
-print(df.any)
+df["GDP_Trend"] = df["GDP_Growth"].rolling(3).mean()
+df["Insight"] = df.apply(generate_insight, axis=1)
+
+# print(df.any)
+
