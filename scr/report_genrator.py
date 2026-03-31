@@ -1,14 +1,5 @@
 from main import df #type: ignore
 
-
-
-
-
-
-
-
-
-
    
 def generate_report():
     lines = []                         
