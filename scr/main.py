@@ -63,6 +63,20 @@ df["Condition"] = df.apply(get_condition, axis=1)
 df["Contradiction"] = df.apply(detect_contradiction, axis=1)
 df["GDP_Trend"] = df["GDP_Growth"].rolling(3).mean()
 df["Insight"] = df.apply(generate_insight, axis=1)
+condition_map = {
+    "Recession Signal": "Severe recession detected due to GDP collapse",
+    "Stagflation Risk": "High inflation with weak growth, stagflation risk",
+    "Healthy Growth": "Strong growth with improving jobs, healthy economy",
+}
+df["Condition_Summary"] = df["Condition"].map(condition_map).fillna("Stable economy with no major risks")
 
-# print(df.any)
+
+
+
+
+
+
+
+# if __name__ == "__main__":
+#     print(df.any)
 
