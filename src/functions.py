@@ -456,11 +456,9 @@ def choice_5(df):
         print("Invalid choice. Returning to menu.")
 
 
-############################### web functions ########################
 
-def web_choice_1(df):
-    country = normalize_country(st.text_input("Enter the country for overview (default: India): ") or "India"   )
-    over_view_of_economy_chart(df=df, choice=country)
+
+
 
 
 

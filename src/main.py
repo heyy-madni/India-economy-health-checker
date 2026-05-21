@@ -1,6 +1,6 @@
 #main.py
 
-from menu_manager import main
+
 from data_pipeline import df
 from data_pipeline import SCR_DIR
 import subprocess

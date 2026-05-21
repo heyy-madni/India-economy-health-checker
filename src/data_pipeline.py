@@ -142,5 +142,5 @@ df["Regime"] = df.apply(lambda row: f.get_regime(row, df), axis=1)
 # df.to_csv(file, index=False)
 
 if __name__ == '__main__':
-    print(df.head())
+    print(df.info())
 
