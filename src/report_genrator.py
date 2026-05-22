@@ -2,9 +2,6 @@
 from matplotlib import pyplot as plt
 
 
-
-
-
 def over_view_of_economy_chart(df, choice="India"):
     clean = df[df['gdp growth'].between(-20, 25)]
     fig, ax = plt.subplots(figsize=(14, 6))
@@ -57,10 +54,6 @@ def over_view_of_economy_chart(df, choice="India"):
     plt.legend(facecolor='#2a2a2a', edgecolor='#444444',labelcolor='white', fontsize=10)
     
     plt.show()
-
-
-
-
 
 def generate_report(df, country="India"):
 
@@ -292,15 +285,4 @@ def generate_report_HTML(df, country="India", output_path="economic_report.html"
 
     print(f"Report saved → {output_path}")
 
-
-
-
-
-
-
-if __name__ == "__main__":
-    from data_pipeline import df
-
-    generate_report(df)
-    # over_view_of_economy_chart(df,choice="United States")
 

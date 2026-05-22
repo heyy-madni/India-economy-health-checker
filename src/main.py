@@ -1,17 +1,8 @@
 #main.py
 
-
-from data_pipeline import df
 from data_pipeline import SCR_DIR
 import subprocess
 import sys
-#todo add multi country in Regime Periods & Condition Checker
-#todo use income per capita 
-#todo refactor menu and add library
-
-
-
-
 
 
 if __name__ == "__main__":
