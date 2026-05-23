@@ -22,7 +22,13 @@ def get_regional_baseline(df, country, year, agg):
     _baseline_cache[cache_key] = result
     return result
 
-
+def compute_global_benchmarks(df):
+    return {
+        "gdp growth": float(df["gdp growth"].mean()),
+        "Inflation": float(df["Inflation"].mean()),
+        "Unemployment": float(df["Unemployment"].mean()),
+        "Income_Per_Capita": float(df["Income_Per_Capita"].mean())
+    }
 
 ####################### pipeline functions ########################
 
@@ -177,49 +183,34 @@ def detect_contradiction(row, df):
         return "No Contradiction"
 
 def get_regime(row, df):
+    score = row["Economic_Score"]
     country = row["country"]
-    year    = row["Year"]
+    year = row["Year"]
+    
+    # get previous year score
+    prev = df[(df["country"] == country) & (df["Year"] == year - 1)]
+    prev_score = prev["Economic_Score"].iloc[0] if not prev.empty else score
+    
+    improving = score > prev_score
 
-    mean = get_regional_baseline(df, country, year, 'mean')
-    std  = get_regional_baseline(df, country, year, 'std')
-
-    if mean.empty or std.empty:
-        return "Transition"
-
-    score_mean = mean.get('Economic_Score', 50)
-    score_std  = std.get('Economic_Score', 10)
-
-    score_high = score_mean + score_std
-    score_low  = score_mean - score_std
-
-    if row["Economic_Score"] > score_high:
+    if score >= 65:
         return "Expansion"
-    elif row["Economic_Score"] < score_low:
+    elif score <= 35 and not improving:
         return "Crisis"
+    elif score <= 35 and improving:
+        return "Recovery"
     else:
         return "Transition"
 
-def economic_score(row, df=None):
-    gdp       = row.get("gdp growth", 0)
-    unemp     = row.get("Unemployment", 6)
-    inflation = row.get("Inflation", 2)
-    income    = row.get("Income_Per_Capita", 0)
+def economic_score(row, df):
+    year_df = df[df["Year"] == row["Year"]]
+    
+    gdp_pct   = year_df["gdp growth"].rank(pct=True)[row.name] * 100
+    inc_pct   = year_df["Income_Per_Capita"].rank(pct=True)[row.name] * 100
+    unemp_pct = (1 - year_df["Unemployment"].rank(pct=True)[row.name]) * 100
+    inf_pct   = (1 - year_df["Inflation"].rank(pct=True)[row.name]) * 100
 
-    # Use regional income benchmark if df available, else fallback
-    if df is not None:
-        mean = get_regional_baseline(df, row["country"], row["Year"], 'mean')
-        income_benchmark = mean.get('Income_Per_Capita', 12416.13) if not mean.empty else 12416.13
-    else:
-        income_benchmark = 12416.13
-
-    score  = gdp * 4
-    score -= unemp * 3
-    score -= max(0, inflation - 2) * 2
-    score += (income / income_benchmark) * 3
-
-    MIN_SCORE, MAX_SCORE = -40, 60
-    normalized = (score - MIN_SCORE) / (MAX_SCORE - MIN_SCORE) * 100
-    return round(max(0, min(100, normalized)), 2)
+    return round((gdp_pct * 0.25 + inc_pct * 0.35 + unemp_pct * 0.2 + inf_pct * 0.2), 2)
 
 ####################### data functions ########################
 

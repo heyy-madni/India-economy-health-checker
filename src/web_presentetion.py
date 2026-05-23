@@ -39,17 +39,54 @@ def load_data():
 df = load_data()
 
 
-st.title('🌐 MacroLens')
 # st.subheader('Global Economic Intelligence — 130+ Countries, 4 Indicators, 20+ Years')
 st.sidebar.markdown("---")
 st.sidebar.markdown("**Data:** World Bank Open Data")
 st.sidebar.markdown("**Built by:** Madni | MacroLens v2.0")
 
 # Sidebar navigation
-section = st.sidebar.radio("Navigate", ["Country View", "Regional View", "World View","Data Explorer"])
+section = st.sidebar.radio("Navigate", ["Overview", "Country View", "Regional View", "World View", "Data Explorer"])
 
+if section == "Overview":
     
-if section == "Country View":
+    st.title("🌐 MacroLens")
+    st.caption("Global Economic Insights at a Glance")
+    
+    # Latest year global averages
+    latest_year = int(df["Year"].max())
+    latest_df = df[df["Year"] == latest_year]
+    
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Global GDP Growth", f"{latest_df['gdp growth'].mean():.1f}%")
+    with col2:
+        st.metric("Global Inflation", f"{latest_df['Inflation'].mean():.1f}%")
+    with col3:
+        st.metric("Global Unemployment", f"{latest_df['Unemployment'].mean():.1f}%")
+    with col4:
+        st.metric("Avg Income Per Capita", f"${latest_df['Income_Per_Capita'].mean():,.0f}")
+    
+    # Global trends
+    global_trend = df.groupby("Year")[["gdp growth", "Inflation"]].mean()
+    
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.subheader("Global GDP Growth (%)")
+        st.line_chart(global_trend["gdp growth"], height=200)
+    with col_b:
+        st.subheader("Global Inflation (%)")
+        st.line_chart(global_trend["Inflation"], height=200)
+    
+    # Country table
+    st.subheader("Country Overview")
+    overview_df = latest_df[["country", "Region", "gdp growth", "Inflation", 
+                              "Unemployment", "Income_Per_Capita", "Economic_Score"]]\
+                  .sort_values("Economic_Score", ascending=False)\
+                  .reset_index(drop=True)
+    st.dataframe(overview_df, use_container_width=True)
+
+
+elif section == "Country View":
 
     if "selected_country" not in st.session_state:
         st.session_state.selected_country = None
@@ -107,18 +144,6 @@ if section == "Country View":
         st.subheader("Regime Periods")
         regime_df = regime_periods(df, country)
         st.dataframe(regime_df, use_container_width=True)
-
-
-    # show = st.toggle("Rank Economies")
-
-    # if show:
-    #     st.write(rank_economies(df))
-    
-
-    # if st.button("Rank economies"):
-    #     top10, bottom10 = rank_economies(df)
-    #     st.dataframe(top10)
-    #     st.dataframe(bottom10)
 
 elif section == "Regional View":
     
@@ -190,11 +215,12 @@ elif section == "World View":
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("🏆 Top 10 Economies")
+
+        st.subheader(f"🏆 Top 10 Economies of {year}")
         st.dataframe(top10, use_container_width=True)
     
     with col2:
-        st.subheader("⚠️ Bottom 10 Economies")
+        st.subheader(f"⚠️ Bottom 10 Economies of {year}")
         st.dataframe(bottom10, use_container_width=True)
 
 elif section == "Data Explorer":
@@ -211,8 +237,8 @@ elif section == "Data Explorer":
     )
 
     if choice == "Countries":
-
-        st.subheader("Countries Supported")
+        num=(df['country'].unique().shape[0])
+        st.subheader(f"Countries Supported ({num})")
         st.write(df["country"].unique())
 
     elif choice == "Years":

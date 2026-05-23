@@ -136,13 +136,15 @@ else:
     df["Insight"]               = df.apply(f.generate_insight, axis=1)
     df["GDP_Predicted"]         = df.groupby("country")["gdp growth"].transform(lambda x: x.rolling(3).mean())
     df["Condition_checker"]     = df.apply(lambda row: f.check_get_condition(row, df), axis=1)
-    df["Regime"] = df.apply(lambda row: f.get_regime(row, df), axis=1)
+    df["Regime"]                = df.apply(lambda row: f.get_regime(row, df), axis=1)
     
+    
+
+
     df.to_csv(CACHE_PATH, index=False)
     print("Computed and saved to cache.")
 
 
 
-# if __name__ == '__main__':
-#     print(df.info())
+
 
