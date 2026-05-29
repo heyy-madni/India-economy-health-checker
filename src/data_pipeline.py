@@ -145,6 +145,6 @@ else:
     print("Computed and saved to cache.")
 
 
-
+print(df.columns,df.head())
 
 
