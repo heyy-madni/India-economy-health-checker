@@ -12,11 +12,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SCR_DIR = BASE_DIR / "src"
 SAVE_REPORT_DIR = BASE_DIR / "reports"
 
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_columns', None)
-pd.set_option('display.width', None)
-pd.set_option('display.max_colwidth', None)
-
 
 def raw_files():
     
@@ -145,6 +140,5 @@ else:
     print("Computed and saved to cache.")
 
 
-print(df.columns,df.head())
 
 
