@@ -5,6 +5,7 @@ from data_pipeline import df as raw_df
 from functions import  regime_periods, rank_economies
 
 # Page config
+
 st.set_page_config(page_title="MacroLens", layout="wide", initial_sidebar_state="expanded")
 
 # CSS
